@@ -1,5 +1,6 @@
-import { api } from "@/network";
+
 import { BarcodeScanningResult, CameraType, CameraView, useCameraPermissions } from "expo-camera";
+import { Link, useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useState } from "react";
 import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -9,6 +10,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 export default function Scanner({ onScan }: { onScan: (result: BarcodeScanningResult) => void; }) {
     const [permission, requestPermission] = useCameraPermissions();
     const [dataCache, setDataCache] = useState<string[]>([])
+    const router = useRouter()
 
     if (!permission) {
         return <View />;
@@ -50,6 +52,7 @@ export default function Scanner({ onScan }: { onScan: (result: BarcodeScanningRe
             />
             <View>
                 <Text>{dataCache.findLast(predicate => predicate)}</Text>
+                <Link href={`/cadastrar/${dataCache.findLast(predicate => predicate)}`}>Continuar</Link>
             </View>
         </SafeAreaView>
     );

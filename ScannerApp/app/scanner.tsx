@@ -6,6 +6,7 @@ import { SafeAreaView, Text } from "react-native";
 
 export default function ScannerPage() {
     const onScan = (result: BarcodeScanningResult) => {
+        
     }
     return (
         <Scanner onScan={onScan} />
