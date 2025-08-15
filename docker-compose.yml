@@ -4,15 +4,15 @@ services:
     ports:
       - "6379:6379"
     environment:
-      REDIS_PASSWORD: secret
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
   server:
     image: server:latest
     container_name: server
     ports:
       - "8080:8080"
     environment:
-      REDIS_ADDRESS: "redis:6379"
-      REDIS_PASSWORD: "secret"
+      - REDIS_ADDRESS=${REDIS_ADDRESS}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     depends_on:
       - redis
   nginx:
@@ -27,3 +27,24 @@ services:
       - /etc/letsencrypt/live/v2202508293879372462.ultrasrv.de/privkey.pem:/etc/ssl/private/privkey.pem:ro
     depends_on:
       - server
+    
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    depends_on:
+      - server
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_ADMIN_USER}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+    depends_on:
+      - prometheus

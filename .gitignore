@@ -72,3 +72,4 @@ build/pdepend
 ._*
 .~lock.*
 *.bak
+.env
