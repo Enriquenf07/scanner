@@ -8,5 +8,6 @@ RUN CGO_ENABLED=0 GOOS=linux go build -a -o main
 FROM alpine:3.18
 WORKDIR /app
 COPY --from=builder /build/main ./main
+RUN mkdir /app/data
 EXPOSE 8080
 ENTRYPOINT ["./main"]
