@@ -4,15 +4,15 @@ import (
 	"net/http"
 	"scanner-backend/utils"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
 )
 
-func RegisterRoutes(r *mux.Router, middleware func()){
-	s := r.PathPrefix("/excel").Subrouter()
-	s.HandleFunc("", func(w http.ResponseWriter, r *http.Request) {
-		middleware()
-		ctx := r.Context()
-		err := Create(ctx)
-		utils.HandleError(err, "erro interno", w)
+func RegisterRoutes(r chi.Router) {
+	r.Route("/excel", func(r chi.Router) {
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			ctx := r.Context()
+			err := Create(ctx)
+			utils.HandleError(err, "erro interno", w)
+		})
 	})
 }

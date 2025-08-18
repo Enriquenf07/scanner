@@ -1,7 +1,9 @@
 package monitor
 
 import (
-	"github.com/gorilla/mux"
+	"net/http"
+
+	"github.com/go-chi/chi/v5"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
@@ -19,6 +21,8 @@ func init() {
 	prometheus.MustRegister(HttpRequestsTotal)
 }
 
-func RegisterRoutes(r *mux.Router) {
-	r.Handle("/metrics", promhttp.Handler()).Methods("GET")
+func RegisterRoutes(r chi.Router) {
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		promhttp.Handler().ServeHTTP(w, r)
+	})
 }

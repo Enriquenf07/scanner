@@ -4,19 +4,32 @@ import (
 	"net/http"
 	"scanner-backend/barcode"
 	"scanner-backend/excel"
+	"scanner-backend/hooks"
 	"scanner-backend/monitor"
+	"time"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
-func middlewares(){
-	monitor.HttpRequestsTotal.Inc()
-}
+func RegisterRoutes(r *chi.Mux) {
+	r.Route("/metrics", func(r chi.Router) {
+		monitor.RegisterRoutes(r)
+	})
 
-func RegisterRoutes(r *mux.Router) {
-    barcode.RegisterRoutes(r, middlewares)
-	monitor.RegisterRoutes(r)
-	excel.RegisterRoutes(r, middlewares)
-	fs := http.FileServer(http.Dir("./data"))
-	r.PathPrefix("/data/").Handler(http.StripPrefix("/data/", fs))
+	r.Route("/", func(r chi.Router) {
+		r.Use(hooks.Monitor)
+		r.Use(middleware.Logger)
+		r.Use(middleware.Recoverer)
+		r.Use(middleware.RequestID)
+		r.Use(middleware.RealIP)
+		r.Use(middleware.Timeout(5 * time.Second))
+		r.Use(middleware.StripSlashes)
+
+		barcode.RegisterRoutes(r)
+		excel.RegisterRoutes(r)
+
+		fs := http.FileServer(http.Dir("./data"))
+		r.Handle("/data/*", http.StripPrefix("/data/", fs))
+	})
 }

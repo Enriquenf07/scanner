@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Página inicial</title>
+</head>
+
+<body>
+    <main>
+        <div id="itens" hx-get="/barcode" hx-trigger="load" hx-swap="innerHTML">
+
+        </div>
+        <div>
+            <button>Atualizar planilha</button>
+        </div>
+        <div>
+            <button>Download</button>
+        </div>
+    </main>
+</body>
+<script src="./main.js"></script>
+
+</html>
