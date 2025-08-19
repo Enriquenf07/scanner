@@ -26,7 +26,7 @@ func Create(ctx context.Context, data BarcodeRequest) error {
 
 func GetAll(ctx context.Context) ([]BarcodeSimples, error){
 	var cursor uint64
-	var produtos []BarcodeSimples
+	produtos := []BarcodeSimples{}
 
 	for {
 		keys, nextCursor, err := config.Rdb.Scan(ctx, cursor, "produto:*", 100).Result()
